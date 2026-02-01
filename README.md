@@ -1,31 +1,53 @@
-# Control 2 
+# CSV Reader POO PHP
 
-## Table of content 
+## Description
 
-<!--toc:start-->
-- [Control 2](#control-2)
-  - [Table of content](#table-of-content)
-  - [About this exercice](#about-this-exercice)
-  - [Pre requisite](#pre-requisite)
-  - [Objective](#objective)
-  - [Bonus points](#bonus-points)
-    - [Git repository +2](#git-repository-2)
-<!--toc:end-->
+Ce projet transforme un script PHP impératif en code orienté objet (POO).
 
-## About this exercice
+Le script lit un fichier CSV contenant 2 colonnes de nombres. Pour chaque nombre de la colonne gauche, il compte ses occurrences dans la colonne droite et multiplie ces deux valeurs. Le résultat final est la somme de toutes ces multiplications.
 
-This exercice is to test your abilities to translate imperative PHP code into OOP code
+## Captures d'écran
 
-## Pre requisite
+![image](image.png)
 
-You would need to know how PHP works. You need to know OOP to get the most out of the exercices.
 
-## Objective
 
-The provided code in `index.php` is reading a CSV file. In this, there are 2 columns of number. For each number in the left column, the script is counting their occurences in the right column and multiply those 2 numbers. Then, it adds all the multiplication results.
+## Structure du projet
+![image-1](image-1.png)
+```
+├── index.php                      # Script principal (version OOP)
+├── input.csv                      # Fichier de données
+├── sortedInput.json               # Export JSON des données triées
+└── poostyle/
+    └── src/
+        ├── Reader/
+        │   └── CsvReader.php      # Lecture du fichier CSV
+        ├── Separator/
+        │   └── ColumnSeparator.php # Séparation des colonnes
+        ├── Calculator/
+        │   └── SimilarityCalculator.php # Calcul du score
+        └── Exporter/
+            └── JsonExporter.php   # Export en JSON
+```
 
-For example :
+## Classes
 
+| Classe | Responsabilité |
+|--------|----------------|
+| `CsvReader` | Lit le fichier CSV et retourne un tableau |
+| `ColumnSeparator` | Sépare les données en colonne gauche et droite |
+| `SimilarityCalculator` | Compte les occurrences et calcule le score |
+| `JsonExporter` | Exporte les données en format JSON |
+
+## Utilisation
+
+```bash
+php index.php
+```
+
+## Exemple
+
+Avec les données suivantes :
 ```
 3   4
 4   3
@@ -35,14 +57,10 @@ For example :
 3   3
 ```
 
-The first number in the left column is `3`, and it appears 3 times in the right column. The first operation is `3 * 3 = 9`. Then, the seconde number in the left column is `4` and it appears 1 time in the right column. The second operation is `4 * 1 = 4`. And so on. In the end, the result should be `9 + 4 + 0 + 0 + 9 + 9 = 31`.
+Le calcul est :
+- 3 apparaît 3 fois dans la colonne droite → 3 × 3 = 9
+- 4 apparaît 1 fois → 4 × 1 = 4
+- 2 apparaît 0 fois → 2 × 0 = 0
+- 1 apparaît 0 fois → 1 × 0 = 0
 
-The provided script is functionnal and has been tested. Your objective is to turn this script into a OOP style, without losing any feature. 
-
-## Bonus points
-
-### Git repository +2
-
-- working with branches
-- doing atomic commits using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
-- doing PR or merges from your working branch to your main branch once a task is completed
+**Résultat : 9 + 4 + 0 + 0 + 9 + 9 = 31**
