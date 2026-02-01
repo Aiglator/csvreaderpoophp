@@ -1,55 +1,25 @@
 <?php
 
-$handle = fopen(__DIR__ . '/input.csv', 'r');
-$row = fgetcsv($handle, 1000, ',', '"', '\\');
-$input = [];
-while($row !== false) {
-    $input[] = $row;
-    $row = fgetcsv($handle, 1000, ',', '"', '\\');
-}
-fclose($handle);
+// Charger les classes
+require_once __DIR__ . '/poostyle/src/Reader/CsvReader.php';
+require_once __DIR__ . '/poostyle/src/Separator/ColumnSeparator.php';
+require_once __DIR__ . '/poostyle/src/Calculator/SimilarityCalculator.php';
+require_once __DIR__ . '/poostyle/src/Exporter/JsonExporter.php';
 
-$localisationLeftList = [];
-$localisationRightList = [];
+use App\Reader\CsvReader;
+use App\Separator\ColumnSeparator;
+use App\Calculator\SimilarityCalculator;
+use App\Exporter\JsonExporter;
 
-foreach($input as $row) {
-    $localisationLeftList[] = $row[0];
-    $localisationRightList[] = $row[1];
-}
 
-$input = [$localisationLeftList, $localisationRightList];
-
-for($i = 0; $i < count($input); $i++) {
-    sort($input[$i]);
-}
-
-file_put_contents(__DIR__ . '/sortedInput.json', json_encode($input, JSON_PRETTY_PRINT));
-
-$greatestList = $input[0];
-
-for($i = 1; $i < count($input); $i++) {
-    if(count($input[$i]) > count($greatestList)) {
-        $greatestList = $input[$i];
-    }
-}
-
-$listWithMultiplier = [];
-
-for($i = 0; $i < count($input[0]); $i++) {
-    $listWithMultiplier[$input[0][$i]] = 0;
-}
-
-for($i = 0; $i < count($input[1]); $i++) {
-    $value  = $input[1][$i];
-    if(array_key_exists($value, $listWithMultiplier)) {
-        $listWithMultiplier[$value]++;
-    }
-}
-
-$similarityScore = 0;
-
-foreach($listWithMultiplier as $value=>$multiplier) {
-    $similarityScore += $value * $multiplier;
-}
-
-echo $similarityScore . PHP_EOL;
+$reader = new CsvReader(__DIR__ . '/input.csv');
+$rows = $reader->read();
+$separator = new ColumnSeparator();
+[$left, $right] = $separator->separate($rows);
+sort($left);
+sort($right);
+$exporter = new JsonExporter(__DIR__ . '/sortedInput.json');
+$exporter->export([$left, $right]);
+$calculator = new SimilarityCalculator($left, $right);
+$score = $calculator->calculate();
+echo $score;
